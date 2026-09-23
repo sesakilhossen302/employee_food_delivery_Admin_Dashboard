@@ -1,13 +1,13 @@
-import { Category, Product, Order, DeliverySettings, StoreSettings, Driver } from '../types';
+﻿import { Category, Product, Order, DeliverySettings, StoreSettings, Driver } from '../types';
 
 export const initialStoreSettings: StoreSettings = {
-  storeName: "Dakota Gas Station & Convenience Store",
+  storeName: "Little Arrows Delivery App",
   storePhone: "+1 (555) 492-3810",
   storeEmail: "orders@dakotagasstore.com",
   enableStorePickup: true,
   enablePayAtDoor: true,
   taxRatePercent: 8.5,
-  bannerMessage: "⚡ Fast local delivery from your favorite convenience store & gas station!"
+  bannerMessage: "âš¡ Fast local delivery from your favorite convenience store & gas station!"
 };
 
 export const initialDeliverySettings: DeliverySettings = {
@@ -23,16 +23,16 @@ export const initialDeliverySettings: DeliverySettings = {
 };
 
 export const initialCategories: Category[] = [
-  { id: 'cat-1', name: 'Drinks & Pop', iconEmoji: '🥤', itemCount: 18, isActive: true },
-  { id: 'cat-2', name: 'Energy Drinks', iconEmoji: '⚡', itemCount: 12, isActive: true },
-  { id: 'cat-3', name: 'Snacks & Chips', iconEmoji: '🍟', itemCount: 24, isActive: true },
-  { id: 'cat-4', name: 'Candy & Chocolate', iconEmoji: '🍫', itemCount: 16, isActive: true },
-  { id: 'cat-5', name: 'Ice Cream', iconEmoji: '🍦', itemCount: 8, isActive: true },
-  { id: 'cat-6', name: 'Automotive & Fluids', iconEmoji: '🚗', itemCount: 9, isActive: true },
-  { id: 'cat-7', name: 'Ice & Coolers', iconEmoji: '🧊', itemCount: 4, isActive: true },
-  { id: 'cat-8', name: 'Firewood & Camp', iconEmoji: '🪵', itemCount: 5, isActive: true },
-  { id: 'cat-9', name: 'Grocery & Essentials', iconEmoji: '🛒', itemCount: 22, isActive: true },
-  { id: 'cat-10', name: 'Seasonal Specials', iconEmoji: '🔥', itemCount: 7, isActive: true },
+  { id: 'cat-1', name: 'Drinks & Pop', iconEmoji: 'ðŸ¥¤', itemCount: 18, isActive: true },
+  { id: 'cat-2', name: 'Energy Drinks', iconEmoji: 'âš¡', itemCount: 12, isActive: true },
+  { id: 'cat-3', name: 'Snacks & Chips', iconEmoji: 'ðŸŸ', itemCount: 24, isActive: true },
+  { id: 'cat-4', name: 'Candy & Chocolate', iconEmoji: 'ðŸ«', itemCount: 16, isActive: true },
+  { id: 'cat-5', name: 'Ice Cream', iconEmoji: 'ðŸ¦', itemCount: 8, isActive: true },
+  { id: 'cat-6', name: 'Automotive & Fluids', iconEmoji: 'ðŸš—', itemCount: 9, isActive: true },
+  { id: 'cat-7', name: 'Ice & Coolers', iconEmoji: 'ðŸ§Š', itemCount: 4, isActive: true },
+  { id: 'cat-8', name: 'Firewood & Camp', iconEmoji: 'ðŸªµ', itemCount: 5, isActive: true },
+  { id: 'cat-9', name: 'Grocery & Essentials', iconEmoji: 'ðŸ›’', itemCount: 22, isActive: true },
+  { id: 'cat-10', name: 'Seasonal Specials', iconEmoji: 'ðŸ”¥', itemCount: 7, isActive: true },
 ];
 
 export const initialProducts: Product[] = [
@@ -84,7 +84,7 @@ export const initialProducts: Product[] = [
   },
   {
     id: 'prod-5',
-    name: '-20°F Windshield Washer Fluid',
+    name: '-20Â°F Windshield Washer Fluid',
     category: 'Automotive & Fluids',
     price: 4.49,
     unit: '1 Gallon',
@@ -174,7 +174,7 @@ export const initialOrders: Order[] = [
     paymentMethod: 'cash_on_delivery',
     paymentStatus: 'unpaid',
     status: 'received',
-    estimatedDeliveryTime: '20–30 min'
+    estimatedDeliveryTime: '20â€“30 min'
   },
   {
     id: 'ord-102',
@@ -206,7 +206,7 @@ export const initialOrders: Order[] = [
       name: 'Marcus Vance',
       phone: '+1 (555) 304-9122'
     },
-    estimatedDeliveryTime: '15–25 min'
+    estimatedDeliveryTime: '15â€“25 min'
   },
   {
     id: 'ord-103',
@@ -221,7 +221,7 @@ export const initialOrders: Order[] = [
     },
     fulfillmentType: 'pickup',
     items: [
-      { id: 'item-6', productId: 'prod-5', name: '-20°F Windshield Washer Fluid', price: 4.49, quantity: 2, totalPrice: 8.98 }
+      { id: 'item-6', productId: 'prod-5', name: '-20Â°F Windshield Washer Fluid', price: 4.49, quantity: 2, totalPrice: 8.98 }
     ],
     subtotal: 8.98,
     taxes: 0.76,
@@ -234,3 +234,4 @@ export const initialOrders: Order[] = [
     status: 'delivered'
   }
 ];
+

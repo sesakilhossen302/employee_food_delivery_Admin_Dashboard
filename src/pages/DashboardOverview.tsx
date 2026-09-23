@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Order, Product, Driver, StoreSettings, OrderStatus } from '../types';
 import { OrderCard } from '../components/orders/OrderCard';
 import {
@@ -73,11 +73,11 @@ export const DashboardOverview: React.FC<Props> = ({
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
         <div className="relative z-10 max-w-2xl space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-bold">
-            <span>🏪 Gas Station & Convenience Store Live Hub</span>
+            <span>ðŸª Little Arrows Delivery Live Hub</span>
           </div>
           <h2 className="text-2xl font-black tracking-tight">{storeSettings.storeName}</h2>
           <p className="text-sm text-slate-300">
-            {storeSettings.bannerMessage} • Monitor active orders, print packing slips, and manage stock in real-time.
+            {storeSettings.bannerMessage} â€¢ Monitor active orders, print packing slips, and manage stock in real-time.
           </p>
         </div>
       </div>
@@ -139,3 +139,4 @@ export const DashboardOverview: React.FC<Props> = ({
     </div>
   );
 };
+

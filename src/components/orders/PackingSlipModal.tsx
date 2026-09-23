@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Order, StoreSettings } from '../../types';
 import { Printer, X, CheckCircle, MapPin, Phone, Clock, FileText } from 'lucide-react';
 
@@ -50,9 +50,9 @@ export const PackingSlipModal: React.FC<Props> = ({ order, storeSettings, onClos
           
           {/* Header */}
           <div className="text-center border-b border-dashed border-slate-300 pb-5">
-            <span className="text-2xl">⛽ 🏪</span>
+            <span className="text-2xl">â›½ ðŸª</span>
             <h1 className="text-xl font-black text-slate-900 tracking-tight mt-1">{storeSettings.storeName}</h1>
-            <p className="text-xs text-slate-500">{storeSettings.storePhone} • {storeSettings.storeEmail}</p>
+            <p className="text-xs text-slate-500">{storeSettings.storePhone} â€¢ {storeSettings.storeEmail}</p>
             <div className="inline-block mt-3 px-3 py-1 bg-slate-100 rounded-md text-xs font-mono font-bold tracking-wider">
               {order.orderNumber}
             </div>
@@ -66,13 +66,13 @@ export const PackingSlipModal: React.FC<Props> = ({ order, storeSettings, onClos
             <div>
               <span className="text-slate-400 font-medium">Fulfillment Type:</span>
               <p className="font-bold text-slate-800 uppercase tracking-wide">
-                {order.fulfillmentType === 'delivery' ? '🚗 Local Delivery' : '🏪 Store Counter Pickup'}
+                {order.fulfillmentType === 'delivery' ? 'ðŸš— Local Delivery' : 'ðŸª Store Counter Pickup'}
               </p>
             </div>
             <div className="text-right">
               <span className="text-slate-400 font-medium">Payment Method:</span>
               <p className="font-bold text-emerald-700 uppercase tracking-wide">
-                💵 {order.paymentMethod.replace(/_/g, ' ')}
+                ðŸ’µ {order.paymentMethod.replace(/_/g, ' ')}
               </p>
             </div>
           </div>
@@ -199,3 +199,4 @@ export const PackingSlipModal: React.FC<Props> = ({ order, storeSettings, onClos
     </div>
   );
 };
+

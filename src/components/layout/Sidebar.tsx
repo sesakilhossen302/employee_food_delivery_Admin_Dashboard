@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -32,10 +32,10 @@ export const Sidebar: React.FC = () => {
           </div>
           <div>
             <h1 className="font-extrabold text-white text-sm tracking-tight leading-none">
-              DAKOTA STORE
+              LITTLE ARROWS
             </h1>
             <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
-              Gas Station & Delivery
+              Delivery App
             </span>
           </div>
         </div>
@@ -85,3 +85,4 @@ export const Sidebar: React.FC = () => {
     </aside>
   );
 };
+
