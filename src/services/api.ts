@@ -26,12 +26,30 @@ export const getOrders = async (): Promise<Order[]> => {
         id: o._id || o.id,
       }));
     }
-    return initialOrders;
+    return [];
   } catch (error) {
     console.warn('Backend not reachable, using initial orders:', error);
-    return initialOrders;
+    return [];
   }
 };
+export const createCategoryApi = async (name: string, icon: string): Promise<Category | null> => {
+  try {
+    const res = await apiClient.post('/categories', { name, iconUrl: icon, iconEmoji: '🍲', isActive: true });
+    if (res.data?.data) {
+      const c = res.data.data;
+      return {
+        ...c,
+        id: c._id || c.id,
+        itemCount: 0,
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Failed to create category:', error);
+    return null;
+  }
+};
+
 
 export const updateOrderStatusApi = async (orderId: string, status: OrderStatus): Promise<void> => {
   try {
@@ -73,10 +91,10 @@ export const getProducts = async (): Promise<Product[]> => {
         id: p._id || p.id,
       }));
     }
-    return initialProducts;
+    return [];
   } catch (error) {
     console.warn('Backend not reachable, using initial products:', error);
-    return initialProducts;
+    return [];
   }
 };
 
@@ -114,9 +132,9 @@ export const getCategories = async (): Promise<Category[]> => {
         itemCount: 10,
       }));
     }
-    return initialCategories;
+    return [];
   } catch (error) {
-    return initialCategories;
+    return [];
   }
 };
 
@@ -127,9 +145,9 @@ export const getStoreSettings = async (): Promise<StoreSettings> => {
     if (res.data?.data) {
       return res.data.data;
     }
-    return initialStoreSettings;
+    return null as any;
   } catch (error) {
-    return initialStoreSettings;
+    return null as any;
   }
 };
 
@@ -156,8 +174,17 @@ export const getDrivers = async (): Promise<Driver[]> => {
         totalDeliveries: d.driverDetails?.totalDeliveries || 0,
       }));
     }
-    return initialDrivers;
+    return [];
   } catch (error) {
-    return initialDrivers;
+    return [];
+  }
+};
+export const deleteCategoryApi = async (id: string) => {
+  try {
+    await apiClient.delete(`/categories/${id}`);
+    return true;
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    return false;
   }
 };

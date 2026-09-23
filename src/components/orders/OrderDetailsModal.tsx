@@ -88,8 +88,10 @@ export const OrderDetailsModal: React.FC<Props> = ({
                   return (
                     <button
                       key={s.key}
-                      onClick={() => onUpdateStatus(order.id, s.key)}
-                      className={`p-3 rounded-2xl text-left border transition relative flex flex-col justify-between ${
+                      onClick={() => { if (!['ready_for_driver', 'out_for_delivery', 'delivered'].includes(s.key)) { onUpdateStatus(order.id, s.key); } }}
+                        disabled={['ready_for_driver', 'out_for_delivery', 'delivered'].includes(s.key)}
+                        title={['ready_for_driver', 'out_for_delivery', 'delivered'].includes(s.key) ? 'This status is managed automatically by the Driver App' : ''}
+                      className={`p-3 rounded-2xl text-left border transition relative flex flex-col justify-between ${['ready_for_driver', 'out_for_delivery', 'delivered'].includes(s.key) ? 'opacity-50 cursor-not-allowed bg-slate-50 grayscale' : 'cursor-pointer'} ${
                         isCurrent
                           ? 'border-sky-500 bg-sky-50/70 ring-2 ring-sky-500/20 shadow-sm'
                           : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
@@ -145,24 +147,32 @@ export const OrderDetailsModal: React.FC<Props> = ({
                 )}
 
                 {order.fulfillmentType === 'delivery' && (
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Assign Delivery Driver:
-                    </label>
-                    <select
-                      value={selectedDriver}
-                      onChange={handleDriverChange}
-                      className="w-full text-xs font-medium bg-white border border-slate-300 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    >
-                      <option value="">-- Choose a Driver --</option>
-                      {drivers.map((d) => (
-                        <option key={d.id} value={d.id}>
-                          {d.name} ({d.vehicle}) - [{d.status}]
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+                    <div className="mt-2">
+                      {order.assignedDriver ? (
+                        <div className="p-3 bg-sky-50 border border-sky-200 rounded-xl text-sky-900 text-xs">
+                          <span className="font-bold text-[10px] uppercase tracking-wide block mb-1 text-sky-600">Assigned Driver:</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-sky-200 flex items-center justify-center shrink-0">
+                               <User className="w-4 h-4 text-sky-700" />
+                            </div>
+                            <div>
+                              <p className="font-bold text-sm">{order.assignedDriver.name}</p>
+                              <p className="text-xs opacity-75">{order.assignedDriver.phone}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-2">
+                           <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
+                               <Truck className="w-3 h-3 text-slate-500" />
+                            </div>
+                           <p className="text-xs text-slate-500 font-medium">
+                             Driver will accept this order from their app.
+                           </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
               </div>
             </div>
 

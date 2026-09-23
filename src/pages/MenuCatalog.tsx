@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Category, Product } from '../types';
-import { Plus, Search, Check, AlertCircle, Sparkles, Tag, Layers } from 'lucide-react';
+import { CreateCategoryModal } from '../components/common/CreateCategoryModal';
+import { Plus, Search, Check, AlertCircle, Sparkles, Tag, Layers, X } from 'lucide-react';
 
 interface Props {
   categories: Category[];
   products: Product[];
   onToggleStock: (productId: string) => void;
   onAddProduct: (product: Product) => void;
+  onAddCategory: (category: Category) => void;
+  onDeleteCategory: (id: string) => void;
 }
 
 export const MenuCatalog: React.FC<Props> = ({
@@ -14,10 +17,13 @@ export const MenuCatalog: React.FC<Props> = ({
   products,
   onToggleStock,
   onAddProduct,
+  onAddCategory,
+  onDeleteCategory,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [search, setSearch] = useState<string>('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   // New Product form state
   const [name, setName] = useState('');
@@ -94,8 +100,9 @@ export const MenuCatalog: React.FC<Props> = ({
       {/* Category Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         <button
+          type="button"
           onClick={() => setSelectedCategory('All')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border cursor-pointer ${
             selectedCategory === 'All'
               ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
               : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
@@ -105,22 +112,55 @@ export const MenuCatalog: React.FC<Props> = ({
         </button>
         {categories.map((c) => {
           const count = products.filter((p) => p.category === c.name).length;
+          const isSelected = selectedCategory === c.name;
+          const catId = c.id || (c as any)._id;
+
           return (
-            <button
-              key={c.id}
-              onClick={() => setSelectedCategory(c.name)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border ${
-                selectedCategory === c.name
-                  ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+            <div
+              key={catId}
+              className={`inline-flex items-center rounded-xl text-xs font-bold whitespace-nowrap transition border shadow-sm ${
+                isSelected
+                  ? 'bg-slate-900 text-white border-slate-900'
                   : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
               }`}
             >
-              <span>{c.iconEmoji}</span>
-              <span>{c.name}</span>
-              <span className="text-[10px] opacity-60">({count})</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => setSelectedCategory(c.name)}
+                className="flex items-center gap-1.5 px-3 py-2 cursor-pointer"
+              >
+                <span>{c.iconEmoji || '🍲'}</span>
+                <span>{c.name}</span>
+                <span className="text-[10px] opacity-60">({count})</span>
+              </button>
+              
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm(`Are you sure you want to delete category "${c.name}"?`)) {
+                    onDeleteCategory(catId);
+                  }
+                }}
+                className={`mr-1.5 p-1 rounded-full transition-colors flex items-center justify-center cursor-pointer ${
+                  isSelected
+                    ? 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
+                }`}
+                title={`Delete ${c.name} category`}
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
           );
         })}
+        <button
+          type="button"
+          onClick={() => setShowCategoryModal(true)}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border bg-sky-50 text-sky-600 border-sky-200 hover:bg-sky-100 cursor-pointer"
+        >
+          <Plus className="w-3.5 h-3.5" /> Add New Category
+        </button>
       </div>
 
       {/* Products Grid */}
@@ -206,11 +246,35 @@ export const MenuCatalog: React.FC<Props> = ({
         ))}
       </div>
 
+      {showCategoryModal && (
+        <CreateCategoryModal
+          onClose={() => setShowCategoryModal(false)}
+          onSuccess={(c) => {
+            onAddCategory(c);
+            setShowCategoryModal(false);
+          }}
+        />
+      )}
+
       {/* Add Product Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4">
-            <h3 className="text-lg font-black text-slate-900">Add New Product</h3>
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowAddModal(false);
+          }}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+        >
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4 relative">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-black text-slate-900">Add New Product</h3>
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
             <form onSubmit={handleCreate} className="space-y-3 text-xs">
               <div>
                 <label className="font-bold text-slate-700 block mb-1">Product Name</label>

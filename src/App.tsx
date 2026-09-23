@@ -11,6 +11,7 @@ import {
   toggleProductStockApi,
   createProductApi,
   updateStoreSettingsApi,
+  deleteCategoryApi,
 } from './services/api';
 import { socket } from './services/socket';
 import {
@@ -32,10 +33,10 @@ import { StoreSettingsPage } from './pages/StoreSettings';
 import { OrderDetailsModal } from './components/orders/OrderDetailsModal';
 
 export const App: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
-  const [drivers, setDrivers] = useState<Driver[]>(initialDrivers);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [storeSettings, setStoreSettings] = useState<StoreSettings>(initialStoreSettings);
   const [deliverySettings, setDeliverySettings] = useState<DeliverySettings>(initialDeliverySettings);
   
@@ -52,10 +53,10 @@ export const App: React.FC = () => {
           getDrivers(),
           getStoreSettings(),
         ]);
-        if (liveOrders.length > 0) setOrders(liveOrders);
-        if (liveProducts.length > 0) setProducts(liveProducts);
-        if (liveCategories.length > 0) setCategories(liveCategories);
-        if (liveDrivers.length > 0) setDrivers(liveDrivers);
+        if (Array.isArray(liveOrders)) setOrders(liveOrders);
+        if (Array.isArray(liveProducts)) setProducts(liveProducts);
+        if (Array.isArray(liveCategories)) setCategories(liveCategories);
+        if (Array.isArray(liveDrivers)) setDrivers(liveDrivers);
         if (liveSettings) setStoreSettings(liveSettings);
       } catch (err) {
         console.warn('Backend API sync notice: running with current cache', err);
@@ -127,6 +128,21 @@ export const App: React.FC = () => {
   };
 
   // Add Product
+  const handleDeleteCategory = async (id: string) => {
+    try {
+      const success = await deleteCategoryApi(id);
+      if (success) {
+        setCategories((prev) => prev.filter((c) => (c.id || (c as any)._id) !== id));
+      }
+    } catch (err) {
+      console.error('Failed to delete category:', err);
+    }
+  };
+
+  const handleAddCategory = (category: Category) => {
+    setCategories((prev) => [...prev, category]);
+  };
+
   const handleAddProduct = async (newProd: Product) => {
     const created = await createProductApi(newProd);
     if (created) {
@@ -188,6 +204,8 @@ export const App: React.FC = () => {
                 products={products}
                 onToggleStock={handleToggleStock}
                 onAddProduct={handleAddProduct}
+                  onAddCategory={handleAddCategory}
+                  onDeleteCategory={handleDeleteCategory}
               />
             }
           />
