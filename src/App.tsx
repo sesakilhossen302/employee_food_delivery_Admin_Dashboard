@@ -1,5 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  getOrders,
+  getProducts,
+  getCategories,
+  getDrivers,
+  getStoreSettings,
+  updateOrderStatusApi,
+  assignDriverApi,
+  toggleProductStockApi,
+  createProductApi,
+  updateStoreSettingsApi,
+} from './services/api';
+import { socket } from './services/socket';
 import {
   initialOrders,
   initialProducts,
@@ -8,7 +21,7 @@ import {
   initialStoreSettings,
   initialDeliverySettings,
 } from './services/mockData';
-import { Order, Product, OrderStatus, DeliverySettings, StoreSettings } from './types';
+import { Order, Product, OrderStatus, DeliverySettings, StoreSettings, Category, Driver } from './types';
 import { Layout } from './components/layout/Layout';
 import { DashboardOverview } from './pages/DashboardOverview';
 import { LiveOrders } from './pages/LiveOrders';
@@ -21,15 +34,57 @@ import { OrderDetailsModal } from './components/orders/OrderDetailsModal';
 export const App: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [categories, setCategories] = useState(initialCategories);
-  const [drivers, setDrivers] = useState(initialDrivers);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [drivers, setDrivers] = useState<Driver[]>(initialDrivers);
   const [storeSettings, setStoreSettings] = useState<StoreSettings>(initialStoreSettings);
   const [deliverySettings, setDeliverySettings] = useState<DeliverySettings>(initialDeliverySettings);
   
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
+  // Load Initial Live Data from Backend APIs
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [liveOrders, liveProducts, liveCategories, liveDrivers, liveSettings] = await Promise.all([
+          getOrders(),
+          getProducts(),
+          getCategories(),
+          getDrivers(),
+          getStoreSettings(),
+        ]);
+        if (liveOrders.length > 0) setOrders(liveOrders);
+        if (liveProducts.length > 0) setProducts(liveProducts);
+        if (liveCategories.length > 0) setCategories(liveCategories);
+        if (liveDrivers.length > 0) setDrivers(liveDrivers);
+        if (liveSettings) setStoreSettings(liveSettings);
+      } catch (err) {
+        console.warn('Backend API sync notice: running with current cache', err);
+      }
+    };
+    loadData();
+
+    // Realtime Socket.io Listeners
+    socket.on('new_order', (newOrder: Order) => {
+      console.log('🔔 New Live Order received via Socket.io:', newOrder);
+      setOrders((prev) => [newOrder, ...prev]);
+    });
+
+    socket.on('order_status_updated', (updatedOrder: Order) => {
+      console.log('⚡ Order status updated via Socket.io:', updatedOrder);
+      setOrders((prev) =>
+        prev.map((o) => (o.id === (updatedOrder as any)._id || o.id === updatedOrder.id ? { ...o, ...updatedOrder } : o))
+      );
+    });
+
+    return () => {
+      socket.off('new_order');
+      socket.off('order_status_updated');
+    };
+  }, []);
+
   // Status transitions
   const handleUpdateStatus = (orderId: string, newStatus: OrderStatus) => {
+    updateOrderStatusApi(orderId, newStatus);
     setOrders((prev) =>
       prev.map((o) =>
         o.id === orderId
@@ -48,6 +103,8 @@ export const App: React.FC = () => {
     const driver = drivers.find((d) => d.id === driverId);
     if (!driver) return;
 
+    assignDriverApi(orderId, driver.id, driver.name, driver.phone);
+
     setOrders((prev) =>
       prev.map((o) =>
         o.id === orderId
@@ -63,6 +120,7 @@ export const App: React.FC = () => {
 
   // Instant Stock toggle
   const handleToggleStock = (productId: string) => {
+    toggleProductStockApi(productId);
     setProducts((prev) =>
       prev.map((p) => (p.id === productId ? { ...p, inStock: !p.inStock } : p))
     );
@@ -70,7 +128,14 @@ export const App: React.FC = () => {
 
   // Add Product
   const handleAddProduct = (newProd: Product) => {
+    createProductApi(newProd);
     setProducts((prev) => [newProd, ...prev]);
+  };
+
+  // Save Store Settings
+  const handleSaveStoreSettings = (newSettings: StoreSettings) => {
+    updateStoreSettingsApi(newSettings);
+    setStoreSettings(newSettings);
   };
 
   const activeOrdersCount = orders.filter((o) => o.status !== 'delivered').length;
@@ -137,7 +202,7 @@ export const App: React.FC = () => {
             element={
               <StoreSettingsPage
                 settings={storeSettings}
-                onSave={setStoreSettings}
+                onSave={handleSaveStoreSettings}
               />
             }
           />
