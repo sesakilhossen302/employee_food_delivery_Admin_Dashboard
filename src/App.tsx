@@ -65,12 +65,12 @@ export const App: React.FC = () => {
 
     // Realtime Socket.io Listeners
     socket.on('new_order', (newOrder: Order) => {
-      console.log('🔔 New Live Order received via Socket.io:', newOrder);
+      console.log('ðŸ”” New Live Order received via Socket.io:', newOrder);
       setOrders((prev) => [newOrder, ...prev]);
     });
 
     socket.on('order_status_updated', (updatedOrder: Order) => {
-      console.log('⚡ Order status updated via Socket.io:', updatedOrder);
+      console.log('âš¡ Order status updated via Socket.io:', updatedOrder);
       setOrders((prev) =>
         prev.map((o) => (o.id === (updatedOrder as any)._id || o.id === updatedOrder.id ? { ...o, ...updatedOrder } : o))
       );
@@ -127,9 +127,13 @@ export const App: React.FC = () => {
   };
 
   // Add Product
-  const handleAddProduct = (newProd: Product) => {
-    createProductApi(newProd);
-    setProducts((prev) => [newProd, ...prev]);
+  const handleAddProduct = async (newProd: Product) => {
+    const created = await createProductApi(newProd);
+    if (created) {
+      setProducts((prev) => [created, ...prev]);
+    } else {
+      setProducts((prev) => [newProd, ...prev]);
+    }
   };
 
   // Save Store Settings

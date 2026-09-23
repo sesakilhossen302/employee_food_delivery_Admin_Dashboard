@@ -88,12 +88,19 @@ export const toggleProductStockApi = async (productId: string): Promise<void> =>
   }
 };
 
-export const createProductApi = async (product: Partial<Product>): Promise<void> => {
+export const createProductApi = async (product: Partial<Product>): Promise<Product | null> => {
   try {
-    await apiClient.post('/products', product);
+    const res = await apiClient.post('/products', product);
+    if (res.data?.data) {
+      return {
+        ...res.data.data,
+        id: res.data.data._id || res.data.data.id,
+      };
+    }
   } catch (error) {
-    console.warn('API create product failed, updating local state:', error);
+    console.warn('API create product failed:', error);
   }
+  return null;
 };
 
 // CATEGORIES
